@@ -1,60 +1,65 @@
 package com.dicoding.submissions.githubuserapp_hakam.ui.follow
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.dicoding.submissions.githubuserapp_hakam.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.ItemsItem
+import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken
+import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.USERNAME
+import com.dicoding.submissions.githubuserapp_hakam.databinding.FragmentFollowingBinding
+import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.ListUserAdapter
+import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailActivity
+import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [FollowingFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FollowingFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentFollowingBinding? = null
+    private val binding get() = _binding!!
+    private val followingViewModel by viewModels<DetailViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_following, container, false)
+    ): View {
+        _binding = FragmentFollowingBinding.inflate(inflater, container, false)
+
+        followingViewModel.following.observe(viewLifecycleOwner) { followingData ->
+            if (followingData == null) {
+                val dataUsers = arguments?.getString(USERNAME) ?: ""
+                followingViewModel.getFollowingData(requireActivity(), dataUsers)
+            } else {
+                showFollowing(followingData)
+            }
+        }
+        followingViewModel.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
+        }
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FollowingFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FollowingFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun showFollowing(dataUsers: List<ItemsItem>) {
+        binding.rvFollowing.layoutManager = LinearLayoutManager(activity)
+        val userAdapter = ListUserAdapter(dataUsers)
+        binding.rvFollowing.adapter = userAdapter
+        userAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
+            override fun onItemClicked(data: ItemsItem) {
+                val intent = Intent(activity, DetailActivity::class.java)
+                intent.putExtra(ConstantToken.EXTRA_DETAIL, data.login)
+                startActivity(intent)
             }
+        })
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
