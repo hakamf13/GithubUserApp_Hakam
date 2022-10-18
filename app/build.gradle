@@ -9,7 +9,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        buildConfigField("String", "KEY", '"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"')
+        buildConfigField("String", "KEY", '"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"')
         applicationId "com.dicoding.submissions.githubuserapp_hakam"
         minSdk 21
         targetSdk 32
