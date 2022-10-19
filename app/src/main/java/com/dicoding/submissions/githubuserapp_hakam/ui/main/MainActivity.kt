@@ -10,6 +10,10 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submissions.githubuserapp_hakam.R
@@ -20,16 +24,25 @@ import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.ListUserAdapter
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.favorite.FavoriteActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingActivity
+import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingPreferences
+import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingViewModel
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private val mainViewModel by viewModels<MainViewModel>()
 
+    private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+//        val pref = SettingPreferences.getInstances(datastore)
+//        val mainViewModelFactory = MainViewModelFactory(pref)
+//        mainViewModel =
+//            ViewModelProvider(this@MainActivity, mainViewModelFactory)[MainViewModel::class.java]
 
         val layoutManager = LinearLayoutManager(this)
         binding.rvUser.layoutManager = layoutManager
@@ -101,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            else -> false
+            else -> true
         }
     }
 

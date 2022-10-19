@@ -31,6 +31,7 @@ class FavoriteRepository(application: Application) {
         }
     }
 
-    fun getFavoriteUser(username: String): LiveData<Boolean> = favoriteDao.isFavoriteUser(username)
+    fun getFavoriteUser(username: String): LiveData<Boolean> =
+        favoriteDao.isFavoriteUser(username)
 
 }

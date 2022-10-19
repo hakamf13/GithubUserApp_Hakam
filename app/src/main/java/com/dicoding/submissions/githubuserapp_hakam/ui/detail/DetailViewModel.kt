@@ -1,19 +1,23 @@
 package com.dicoding.submissions.githubuserapp_hakam.ui.detail
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEntity
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.DetailUserResponse
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.ItemsItem
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.retrofit.ApiConfig
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken
+import com.dicoding.submissions.githubuserapp_hakam.di.FavoriteRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailViewModel: ViewModel() {
+
+class DetailViewModel(application: Application, username: String): ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
     private val _detailUser = MutableLiveData<DetailUserResponse>()
@@ -22,6 +26,9 @@ class DetailViewModel: ViewModel() {
     val followers: LiveData<List<ItemsItem>?> = _followers
     private val _following = MutableLiveData<List<ItemsItem>?>(null)
     val following: LiveData<List<ItemsItem>?> = _following
+
+    private val favoriteRepository: FavoriteRepository = FavoriteRepository(application)
+    val favoriteUser: LiveData<Boolean> = favoriteRepository.getFavoriteUser(username)
 
     fun getDetailUser(context: Context, dataUsers: String) {
         _isLoading.value = true
@@ -89,5 +96,17 @@ class DetailViewModel: ViewModel() {
                 Log.e(ConstantToken.TAG, "onFailure: ${t.message.toString()}")
             }
         })
+    }
+
+    fun insertFavoriteUser(favorite: FavoriteEntity) {
+        favoriteRepository.insertFavoriteUser(favorite)
+    }
+
+    fun deleteFavoriteUser(favorite: FavoriteEntity) {
+        favoriteRepository.deleteFavoriteUser(favorite)
+    }
+
+    fun favoriteUser(): Boolean? {
+        return favoriteUser.value
     }
 }

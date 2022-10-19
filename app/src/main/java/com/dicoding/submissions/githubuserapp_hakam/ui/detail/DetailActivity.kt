@@ -5,11 +5,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.dicoding.submissions.githubuserapp_hakam.R
+import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEntity
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.DetailUserResponse
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_DETAIL
+import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_FAVORITE
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.TAB_TITLES
 import com.dicoding.submissions.githubuserapp_hakam.databinding.ActivityDetailBinding
 import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.SectionsPagerAdapter
@@ -29,6 +33,8 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         val detailUsers = intent.extras?.get(EXTRA_DETAIL) as String
+        val favoriteUsers = intent.extras?.get(EXTRA_FAVORITE) as Boolean
+//        val favoriteUsers = intent.getParcelableExtra<FavoriteEntity>(EXTRA_FAVORITE)
         val sectionsPagerAdapter = SectionsPagerAdapter(this, detailUsers)
         val viewPager: ViewPager2 = binding.viewPager
         viewPager.adapter = sectionsPagerAdapter
@@ -46,6 +52,28 @@ class DetailActivity : AppCompatActivity() {
         }
 
         detailMainViewModel.getDetailUser(this, detailUsers)
+
+        detailMainViewModel.favoriteUser.observe(this) { favoriteUsersList ->
+            if (favoriteUsersList) {
+                binding.imbFavorite.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        baseContext,
+                        R.drawable.ic_baseline_favorite_24
+                    )
+                )
+            } else {
+                binding.imbFavorite.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        baseContext,
+                        R.drawable.ic_favorite_border_before_grey_24
+                    )
+                )
+            }
+        }
+
+        binding.imbFavorite.setOnClickListener {
+            va
+        }
     }
 
     private fun ImageView.loadImage(avatarUrl: String?) { Glide.with(this.context) .load(avatarUrl) .apply(

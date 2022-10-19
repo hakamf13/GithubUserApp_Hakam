@@ -18,6 +18,5 @@ class FavoriteEntity(
     val username: String,
 
     @field:ColumnInfo(name = "avatarUrl")
-    val avatarUrl: String? = null,
-
-    ): Parcelable
+    val avatarUrl: String? = null
+): Parcelable
