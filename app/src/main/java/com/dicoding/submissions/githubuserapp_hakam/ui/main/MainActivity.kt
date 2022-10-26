@@ -13,7 +13,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submissions.githubuserapp_hakam.R
@@ -24,8 +23,6 @@ import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.ListUserAdapter
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.favorite.FavoriteActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingActivity
-import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingPreferences
-import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingViewModel
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null

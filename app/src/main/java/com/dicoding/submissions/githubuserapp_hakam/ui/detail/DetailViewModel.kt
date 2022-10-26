@@ -1,6 +1,5 @@
 package com.dicoding.submissions.githubuserapp_hakam.ui.detail
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -17,18 +16,19 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class DetailViewModel(application: Application, username: String): ViewModel() {
+class DetailViewModel : ViewModel() {
+
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
     private val _detailUser = MutableLiveData<DetailUserResponse>()
     val detailUser: LiveData<DetailUserResponse> = _detailUser
+
     private val _followers = MutableLiveData<List<ItemsItem>?>(null)
     val followers: LiveData<List<ItemsItem>?> = _followers
+
     private val _following = MutableLiveData<List<ItemsItem>?>(null)
     val following: LiveData<List<ItemsItem>?> = _following
-
-    private val favoriteRepository: FavoriteRepository = FavoriteRepository(application)
-    val favoriteUser: LiveData<Boolean> = favoriteRepository.getFavoriteUser(username)
 
     fun getDetailUser(context: Context, dataUsers: String) {
         _isLoading.value = true
@@ -39,7 +39,7 @@ class DetailViewModel(application: Application, username: String): ViewModel() {
                 response: Response<DetailUserResponse>
             ) {
                 _isLoading.value = false
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
                     _detailUser.value = response.body()
                 } else {
                     Log.e(ConstantToken.TAG, "onFailure: ${response.message()}")
@@ -84,7 +84,7 @@ class DetailViewModel(application: Application, username: String): ViewModel() {
                 response: Response<List<ItemsItem>>
             ) {
                 _isLoading.value = false
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
                     _following.value = response.body()
                 } else {
                     Log.e(ConstantToken.TAG, "onFailure: ${response.message()}")
@@ -98,15 +98,19 @@ class DetailViewModel(application: Application, username: String): ViewModel() {
         })
     }
 
-    fun insertFavoriteUser(favorite: FavoriteEntity) {
+    fun getFavoriteUser(context: Context, username: String): LiveData<Boolean> {
+        val favoriteRepository = FavoriteRepository(context)
+        return favoriteRepository.getFavoriteUser(username)
+    }
+
+    fun insertFavoriteUser(context: Context, favorite: FavoriteEntity) {
+        val favoriteRepository = FavoriteRepository(context)
         favoriteRepository.insertFavoriteUser(favorite)
     }
 
-    fun deleteFavoriteUser(favorite: FavoriteEntity) {
+    fun deleteFavoriteUser(context: Context, favorite: FavoriteEntity) {
+        val favoriteRepository = FavoriteRepository(context)
         favoriteRepository.deleteFavoriteUser(favorite)
     }
 
-    fun favoriteUser(): Boolean? {
-        return favoriteUser.value
-    }
 }
