@@ -1,6 +1,6 @@
 package com.dicoding.submissions.githubuserapp_hakam.di
 
-import android.app.Application
+import android.content.Context
 import androidx.lifecycle.LiveData
 import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEntity
 import com.dicoding.submissions.githubuserapp_hakam.data.local.room.FavoriteDao
@@ -8,12 +8,12 @@ import com.dicoding.submissions.githubuserapp_hakam.data.local.room.FavoriteData
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class FavoriteRepository(application: Application) {
+class FavoriteRepository(context: Context) {
     private var favoriteDao: FavoriteDao
     private var executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
     init {
-        val db = FavoriteDatabase.getDatabase(application)
+        val db = FavoriteDatabase.getDatabase(context)
         favoriteDao = db.favoriteDao()
     }
 

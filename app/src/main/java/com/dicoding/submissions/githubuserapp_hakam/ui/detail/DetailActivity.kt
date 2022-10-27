@@ -1,85 +1,96 @@
 package com.dicoding.submissions.githubuserapp_hakam.ui.detail
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.dicoding.submissions.githubuserapp_hakam.R
-import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEntity
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.DetailUserResponse
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_DETAIL
-import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_FAVORITE
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.TAB_TITLES
 import com.dicoding.submissions.githubuserapp_hakam.databinding.ActivityDetailBinding
+import com.dicoding.submissions.githubuserapp_hakam.ext.loadImage
 import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.SectionsPagerAdapter
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class DetailActivity : AppCompatActivity() {
-    private var _binding: ActivityDetailBinding? = null
-    private val binding get() = _binding!!
-    private val detailMainViewModel by viewModels<DetailViewModel>()
+
+    private val binding: ActivityDetailBinding by lazy {
+        ActivityDetailBinding.inflate(layoutInflater)
+    }
+
+    private val detailUsers: String by lazy {
+        intent.extras?.getString(EXTRA_DETAIL, "") ?: ""
+    }
+
+    private val viewModel: DetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        if (savedInstanceState == null) {
+            viewModel.getDetailUser(this, detailUsers)
+        }
+        initObserver()
+        initView()
+    }
+
+    private fun initView() {
+
+        // val favoriteUsers = intent.getParcelableExtra<FavoriteEntity>(EXTRA_FAVORITE)
 
         supportActionBar?.hide()
+        binding.apply {
 
-        val detailUsers = intent.extras?.get(EXTRA_DETAIL) as String
-        val favoriteUsers = intent.extras?.get(EXTRA_FAVORITE) as Boolean
-//        val favoriteUsers = intent.getParcelableExtra<FavoriteEntity>(EXTRA_FAVORITE)
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, detailUsers)
-        val viewPager: ViewPager2 = binding.viewPager
-        viewPager.adapter = sectionsPagerAdapter
-        val tabsFollow: TabLayout = binding.tabsFollows
-        TabLayoutMediator(tabsFollow, viewPager) {tabs, position ->
-            tabs.text = resources.getString(TAB_TITLES[position])
-        }.attach()
+            val sectionsPagerAdapter = SectionsPagerAdapter(this@DetailActivity, detailUsers)
+            TabLayoutMediator(tabsFollows, viewPager.apply {
+                adapter = sectionsPagerAdapter
+            }) { tabs, position ->
+                tabs.text = resources.getString(TAB_TITLES[position])
+            }.attach()
 
-        detailMainViewModel.detailUser.observe(this) { detailUserData ->
-            getUserData(detailUserData)
-        }
+            imbFavorite.setOnClickListener {
 
-        detailMainViewModel.isLoading.observe(this) { loader ->
-            showLoading(loader)
-        }
-
-        detailMainViewModel.getDetailUser(this, detailUsers)
-
-        detailMainViewModel.favoriteUser.observe(this) { favoriteUsersList ->
-            if (favoriteUsersList) {
-                binding.imbFavorite.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        baseContext,
-                        R.drawable.ic_baseline_favorite_24
-                    )
-                )
-            } else {
-                binding.imbFavorite.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        baseContext,
-                        R.drawable.ic_favorite_border_before_grey_24
-                    )
-                )
             }
         }
 
-        binding.imbFavorite.setOnClickListener {
-            va
+    }
+
+    private fun initObserver() {
+        viewModel.apply {
+            detailUser.observe(this@DetailActivity) { detailUserData ->
+                getUserData(detailUserData)
+            }
+
+            isLoading.observe(this@DetailActivity) { loader ->
+                showLoading(loader)
+            }
+
+            getFavoriteUser(
+                this@DetailActivity,
+                detailUsers
+            ).observe(this@DetailActivity) { favoriteUsersList ->
+                if (favoriteUsersList) {
+                    binding.imbFavorite.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            baseContext,
+                            R.drawable.ic_baseline_favorite_24
+                        )
+                    )
+                } else {
+                    binding.imbFavorite.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            baseContext,
+                            R.drawable.ic_favorite_border_before_grey_24
+                        )
+                    )
+                }
+            }
         }
     }
 
-    private fun ImageView.loadImage(avatarUrl: String?) { Glide.with(this.context) .load(avatarUrl) .apply(
-        RequestOptions().override(200,200)) .centerCrop() .circleCrop() . into(this) }
-
-    private fun getUserData(userItems: DetailUserResponse){
+    private fun getUserData(userItems: DetailUserResponse) {
         binding.apply {
             tvItemUsername.text = userItems.login
             tvItemName.text = userItems.name
@@ -96,8 +107,4 @@ class DetailActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
 }
