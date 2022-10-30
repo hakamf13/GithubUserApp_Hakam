@@ -5,6 +5,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.dicoding.submissions.githubuserapp_hakam.R
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.DetailUserResponse
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_DETAIL
@@ -24,14 +25,18 @@ class DetailActivity : AppCompatActivity() {
         intent.extras?.getString(EXTRA_DETAIL, "") ?: ""
     }
 
-    private val viewModel: DetailViewModel by viewModels()
+    private val detailViewModel: DetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         if (savedInstanceState == null) {
-            viewModel.getDetailUser(this, detailUsers)
+            detailViewModel.getDetailUser(this, detailUsers)
         }
+
+        val detailViewModelFactory = DetailViewModelfactory(this.application)
+        detailViewModel = ViewModelProvider(this, DetailViewModelfactory)[DetailViewModel::class.java]
+
         initObserver()
         initView()
     }
@@ -58,7 +63,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun initObserver() {
-        viewModel.apply {
+        detailViewModel.apply {
             detailUser.observe(this@DetailActivity) { detailUserData ->
                 getUserData(detailUserData)
             }

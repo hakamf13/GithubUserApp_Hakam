@@ -15,19 +15,19 @@ class FavoriteViewModelFactory private constructor(private val context: Context)
         throw IllegalArgumentException("Unknown viewModel class: " + modelClass.name)
     }
 
-    companion object {
-        @Volatile
-        private var INSTANCE: FavoriteViewModelFactory? = null
-
-
-        @JvmStatic
-        fun getInstance(application: Application): FavoriteViewModelFactory {
-            if (INSTANCE == null) {
-                synchronized(FavoriteViewModelFactory::class.java) {
-                    INSTANCE = FavoriteViewModelFactory(application)
-                }
-            }
-            return INSTANCE as FavoriteViewModelFactory
-        }
-    }
+//    companion object {
+//        @Volatile
+//        private var INSTANCE: FavoriteViewModelFactory? = null
+//
+//
+//        @JvmStatic
+//        fun getInstance(application: Application): FavoriteViewModelFactory {
+//            if (INSTANCE == null) {
+//                synchronized(FavoriteViewModelFactory::class.java) {
+//                    INSTANCE = FavoriteViewModelFactory(application)
+//                }
+//            }
+//            return INSTANCE as FavoriteViewModelFactory
+//        }
+//    }
 }
