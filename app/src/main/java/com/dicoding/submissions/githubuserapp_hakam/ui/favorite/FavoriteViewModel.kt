@@ -12,5 +12,4 @@ class FavoriteViewModel() : ViewModel() {
         val favoriteRepository = FavoriteRepository(context)
         return favoriteRepository.getFavoriteUserList()
     }
-
 }

@@ -1,7 +1,9 @@
 package com.dicoding.submissions.githubuserapp_hakam.ui.detail
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +18,10 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class DetailViewModel : ViewModel() {
+class DetailViewModel(application: Application, username: String) : AndroidViewModel(application) {
+
+    private val mFavRepo: FavoriteRepository = FavoriteRepository(application)
+    val userLogin: LiveData<Boolean> = mFavRepo.getFavoriteUser(username)
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -98,19 +103,20 @@ class DetailViewModel : ViewModel() {
         })
     }
 
-    fun getFavoriteUser(context: Context, username: String): LiveData<Boolean> {
-        val favoriteRepository = FavoriteRepository(context)
-        return favoriteRepository.getFavoriteUser(username)
+    fun getFavoriteUser(): Boolean? {
+//        val favoriteRepository = FavoriteRepository(context)
+//        return mFavRepo.getFavoriteUser(username)
+        return userLogin.value
     }
 
-    fun insertFavoriteUser(context: Context, favorite: FavoriteEntity) {
-        val favoriteRepository = FavoriteRepository(context)
-        favoriteRepository.insertFavoriteUser(favorite)
+    fun insertFavoriteUser(favorite: FavoriteEntity) {
+//        val favoriteRepository = FavoriteRepository(context)
+        mFavRepo.insertFavoriteUser(favorite)
     }
 
-    fun deleteFavoriteUser(context: Context, favorite: FavoriteEntity) {
-        val favoriteRepository = FavoriteRepository(context)
-        favoriteRepository.deleteFavoriteUser(favorite)
+    fun deleteFavoriteUser(favorite: FavoriteEntity) {
+//        val favoriteRepository = FavoriteRepository(context)
+        mFavRepo.deleteFavoriteUser(favorite)
     }
 
 }

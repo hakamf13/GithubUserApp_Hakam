@@ -15,17 +15,22 @@ import com.dicoding.submissions.githubuserapp_hakam.databinding.FragmentFollower
 import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.ListUserAdapter
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailViewModel
+import com.dicoding.submissions.githubuserapp_hakam.ui.favorite.FavoriteViewModelFactory
 
 class FollowersFragment : Fragment() {
     private var _binding: FragmentFollowersBinding? = null
     private val binding get() = _binding!!
-    private val followersViewModel by viewModels<DetailViewModel>()
+
+//    private val followersViewModel by viewModels<DetailViewModel>()
+    private lateinit var followersViewModel: DetailViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFollowersBinding.inflate(inflater, container, false)
+
+        val factory =
 
         followersViewModel.followers.observe(viewLifecycleOwner) { followersData ->
             if (followersData == null) {

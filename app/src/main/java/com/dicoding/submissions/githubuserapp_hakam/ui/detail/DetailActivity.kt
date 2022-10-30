@@ -1,5 +1,6 @@
 package com.dicoding.submissions.githubuserapp_hakam.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -7,8 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.submissions.githubuserapp_hakam.R
+import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEntity
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.DetailUserResponse
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_DETAIL
+import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_FAVORITE
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.TAB_TITLES
 import com.dicoding.submissions.githubuserapp_hakam.databinding.ActivityDetailBinding
 import com.dicoding.submissions.githubuserapp_hakam.ext.loadImage
@@ -25,27 +28,28 @@ class DetailActivity : AppCompatActivity() {
         intent.extras?.getString(EXTRA_DETAIL, "") ?: ""
     }
 
-    private val detailViewModel: DetailViewModel by viewModels()
+    private lateinit var detailViewModel: DetailViewModel
+
+//    private val detailViewModel: DetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+
+        val detailViewModelFactory = DetailViewModelfactory(this.application, detailUsers)
+        detailViewModel = ViewModelProvider(this, detailViewModelFactory)[DetailViewModel::class.java]
+        val favorite = intent.getParcelableExtra<FavoriteEntity>(EXTRA_FAVORITE)
+
+//        detailViewModel = ViewModelProvider(this@DetailActivity, detailViewModelFactory)
+
         if (savedInstanceState == null) {
             detailViewModel.getDetailUser(this, detailUsers)
         }
 
-        val detailViewModelFactory = DetailViewModelfactory(this.application)
-        detailViewModel = ViewModelProvider(this, DetailViewModelfactory)[DetailViewModel::class.java]
-
         initObserver()
         initView()
-    }
 
-    private fun initView() {
-
-        // val favoriteUsers = intent.getParcelableExtra<FavoriteEntity>(EXTRA_FAVORITE)
-
-        supportActionBar?.hide()
         binding.apply {
 
             val sectionsPagerAdapter = SectionsPagerAdapter(this@DetailActivity, detailUsers)
@@ -55,11 +59,24 @@ class DetailActivity : AppCompatActivity() {
                 tabs.text = resources.getString(TAB_TITLES[position])
             }.attach()
 
-            imbFavorite.setOnClickListener {
+            val getData = detailViewModel.detailUser.value
 
+            imbFavorite.setOnClickListener {
+                val insertData = favorite?: FavoriteEntity(getData!!.id, getData.login, getData.avatarUrl)
+                if (detailViewModel.getFavoriteUser()!!) {
+                    detailViewModel.insertFavoriteUser(insertData)
+                } else {
+                    detailViewModel.deleteFavoriteUser(insertData)
+                }
             }
         }
+    }
 
+    private fun initView() {
+
+        // val favoriteUsers = intent.getParcelableExtra<FavoriteEntity>(EXTRA_FAVORITE)
+
+        supportActionBar?.hide()
     }
 
     private fun initObserver() {
@@ -72,10 +89,7 @@ class DetailActivity : AppCompatActivity() {
                 showLoading(loader)
             }
 
-            getFavoriteUser(
-                this@DetailActivity,
-                detailUsers
-            ).observe(this@DetailActivity) { favoriteUsersList ->
+            userLogin.observe(this@DetailActivity){ favoriteUsersList ->
                 if (favoriteUsersList) {
                     binding.imbFavorite.setImageDrawable(
                         ContextCompat.getDrawable(

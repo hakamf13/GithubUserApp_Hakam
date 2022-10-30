@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.submissions.githubuserapp_hakam.ui.favorite.FavoriteViewModel
 
-class DetailViewModelfactory(private val application: Application) : ViewModelProvider.NewInstanceFactory() {
+class DetailViewModelfactory(private val application: Application, private val username: String) : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
-            return FavoriteViewModel() as T
+        if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
+            return DetailViewModel(application, username) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
