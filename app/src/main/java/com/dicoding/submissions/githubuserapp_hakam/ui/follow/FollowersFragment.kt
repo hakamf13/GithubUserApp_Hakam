@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.ItemsItem
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_DETAIL
@@ -30,7 +31,10 @@ class FollowersFragment : Fragment() {
     ): View {
         _binding = FragmentFollowersBinding.inflate(inflater, container, false)
 
-        val factory =
+        val followersFactory = FollowViewModelFactory(this@FollowersFragment.requireActivity().application, "")
+        followersViewModel = ViewModelProvider(
+            this.requireActivity(), followersFactory
+        )[DetailViewModel::class.java]
 
         followersViewModel.followers.observe(viewLifecycleOwner) { followersData ->
             if (followersData == null) {

@@ -38,7 +38,8 @@ class FavoriteActivity : AppCompatActivity() {
 
     private fun initObserver() {
         viewModel.apply {
-            getFavoriteUserList(this@FavoriteActivity).observe(this@FavoriteActivity) { favorite ->
+            favUserList.observe(this@FavoriteActivity) { favorite ->
+//                favUserList(this@FavoriteActivity).observe(this@FavoriteActivity) { favorite ->
                 if (favorite.isEmpty()) {
                     binding.rvFavorite.visibility = View.GONE
                 } else {

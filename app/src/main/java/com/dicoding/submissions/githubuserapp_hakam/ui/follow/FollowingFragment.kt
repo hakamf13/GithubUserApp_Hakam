@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.ItemsItem
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken
@@ -19,13 +20,18 @@ import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailViewModel
 class FollowingFragment : Fragment() {
     private var _binding: FragmentFollowingBinding? = null
     private val binding get() = _binding!!
-    private val followingViewModel by viewModels<DetailViewModel>()
+
+//    private val followingViewModel by viewModels<DetailViewModel>()
+    private lateinit var followingViewModel: DetailViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFollowingBinding.inflate(inflater, container, false)
+
+        val followingFactory = FollowViewModelFactory(this.requireActivity().application, "")
+        followingViewModel = ViewModelProvider(this.requireActivity(), followingFactory)[DetailViewModel::class.java]
 
         followingViewModel.following.observe(viewLifecycleOwner) { followingData ->
             if (followingData == null) {
