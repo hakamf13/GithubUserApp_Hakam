@@ -24,6 +24,7 @@ import com.dicoding.submissions.githubuserapp_hakam.databinding.ActivityMainBind
 import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.ListUserAdapter
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.favorite.FavoriteActivity
+import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingViewModelFactory
 import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingPreferences
 import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingViewModel
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val pref = SettingPreferences.getInstances(datastore)
-        val mainViewModelFactory = ViewModelProvider(this, MainViewModelFactory(pref))[SettingViewModel::class.java]
+        val mainViewModelFactory = ViewModelProvider(this, SettingViewModelFactory(pref))[SettingViewModel::class.java]
         mainViewModelFactory.getThemeSetting().observe(this) { isDarkModeActive : Boolean ->
             if (isDarkModeActive) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

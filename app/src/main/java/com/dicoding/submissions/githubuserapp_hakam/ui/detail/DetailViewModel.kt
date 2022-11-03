@@ -1,9 +1,7 @@
 package com.dicoding.submissions.githubuserapp_hakam.ui.detail
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,15 +11,17 @@ import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.ItemsIt
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.retrofit.ApiConfig
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken
 import com.dicoding.submissions.githubuserapp_hakam.di.FavoriteRepository
+import com.dicoding.submissions.githubuserapp_hakam.ext.showToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+class DetailViewModel(
+    private val context: Context
+) : ViewModel() {
 
-class DetailViewModel(application: Application, username: String) : AndroidViewModel(application) {
-
-    private val mFavRepo: FavoriteRepository = FavoriteRepository(application)
-    val userLogin: LiveData<Boolean> = mFavRepo.getFavoriteUser(username)
+    private val mFavRepo: FavoriteRepository = FavoriteRepository(context)
+    val favUserList: LiveData<List<FavoriteEntity>> = mFavRepo.getFavoriteUserList()
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -103,20 +103,15 @@ class DetailViewModel(application: Application, username: String) : AndroidViewM
         })
     }
 
-    fun getFavoriteUser(): Boolean? {
-//        val favoriteRepository = FavoriteRepository(context)
-//        return mFavRepo.getFavoriteUser(username)
-        return userLogin.value
+    fun insertFavoriteUser(id: Int, username: String, avatar: String) {
+        val data = FavoriteEntity(id, username, avatar)
+        mFavRepo.insertFavoriteUser(data)
+        context.showToast("Success add to favorite")
     }
 
-    fun insertFavoriteUser(favorite: FavoriteEntity) {
-//        val favoriteRepository = FavoriteRepository(context)
-        mFavRepo.insertFavoriteUser(favorite)
-    }
-
-    fun deleteFavoriteUser(favorite: FavoriteEntity) {
-//        val favoriteRepository = FavoriteRepository(context)
-        mFavRepo.deleteFavoriteUser(favorite)
+    fun deleteFavoriteUser(data: FavoriteEntity) {
+        mFavRepo.deleteFavoriteUser(data)
+        context.showToast("Success delete from favorite")
     }
 
 }
