@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.ItemsItem
@@ -16,13 +15,12 @@ import com.dicoding.submissions.githubuserapp_hakam.databinding.FragmentFollower
 import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.ListUserAdapter
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailActivity
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailViewModel
-import com.dicoding.submissions.githubuserapp_hakam.ui.favorite.FavoriteViewModelFactory
+import com.dicoding.submissions.githubuserapp_hakam.util.ViewModelfactory
 
 class FollowersFragment : Fragment() {
     private var _binding: FragmentFollowersBinding? = null
     private val binding get() = _binding!!
 
-//    private val followersViewModel by viewModels<DetailViewModel>()
     private lateinit var followersViewModel: DetailViewModel
 
     override fun onCreateView(
@@ -31,14 +29,12 @@ class FollowersFragment : Fragment() {
     ): View {
         _binding = FragmentFollowersBinding.inflate(inflater, container, false)
 
-        val followersFactory = FollowViewModelFactory(this@FollowersFragment.requireActivity().application, "")
-        followersViewModel = ViewModelProvider(
-            this.requireActivity(), followersFactory
-        )[DetailViewModel::class.java]
+        val followersFactory = ViewModelfactory(requireContext())
+        followersViewModel = ViewModelProvider(requireActivity(), followersFactory)[DetailViewModel::class.java]
 
         followersViewModel.followers.observe(viewLifecycleOwner) { followersData ->
             if (followersData == null) {
-                val dataUsers = arguments?.getString(USERNAME)?:""
+                val dataUsers = arguments?.getString(USERNAME) ?: ""
                 followersViewModel.getFollowersData(requireActivity(), dataUsers)
             } else {
                 showFollowers(followersData)
@@ -71,4 +67,5 @@ class FollowersFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
 }

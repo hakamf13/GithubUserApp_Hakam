@@ -1,11 +1,12 @@
-package com.dicoding.submissions.githubuserapp_hakam.ui.main
+package com.dicoding.submissions.githubuserapp_hakam.ui.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingPreferences
-import com.dicoding.submissions.githubuserapp_hakam.ui.setting.SettingViewModel
 
-class MainViewModelFactory(private val pref: SettingPreferences): ViewModelProvider.NewInstanceFactory() {
+class SettingViewModelFactory(
+    private val pref: SettingPreferences
+) : ViewModelProvider.NewInstanceFactory() {
+
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
@@ -13,4 +14,5 @@ class MainViewModelFactory(private val pref: SettingPreferences): ViewModelProvi
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
+
 }

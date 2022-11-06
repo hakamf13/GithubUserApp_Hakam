@@ -16,6 +16,4 @@ interface FavoriteDao {
     @Delete
     fun deleteFavoriteUser(favorite: FavoriteEntity)
 
-    @Query("SELECT EXISTS(SELECT * FROM favorite WHERE username = :username)")
-    fun isFavoriteUser(username: String): LiveData<Boolean>
 }

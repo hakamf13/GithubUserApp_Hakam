@@ -2,9 +2,10 @@ package com.dicoding.submissions.githubuserapp_hakam.ui.favorite
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEntity
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_FAVORITE
@@ -12,6 +13,7 @@ import com.dicoding.submissions.githubuserapp_hakam.databinding.ActivityFavorite
 import com.dicoding.submissions.githubuserapp_hakam.di.FavoriteRepository
 import com.dicoding.submissions.githubuserapp_hakam.ui.adapter.FavoriteAdapter
 import com.dicoding.submissions.githubuserapp_hakam.ui.detail.DetailActivity
+import com.dicoding.submissions.githubuserapp_hakam.util.ViewModelfactory
 
 class FavoriteActivity : AppCompatActivity() {
 
@@ -19,7 +21,13 @@ class FavoriteActivity : AppCompatActivity() {
         ActivityFavoriteBinding.inflate(layoutInflater)
     }
 
-    private val viewModel by viewModels<FavoriteViewModel>()
+    private val viewModelFactory: ViewModelfactory by lazy {
+        ViewModelfactory(this)
+    }
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[FavoriteViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +47,12 @@ class FavoriteActivity : AppCompatActivity() {
     private fun initObserver() {
         viewModel.apply {
             favUserList.observe(this@FavoriteActivity) { favorite ->
-//                favUserList(this@FavoriteActivity).observe(this@FavoriteActivity) { favorite ->
+                Log.d("FavoriteActivity", "initObserver: $favorite")
+                binding.progressBar.visibility = View.VISIBLE
                 if (favorite.isEmpty()) {
-                    binding.rvFavorite.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                 } else {
-                    binding.rvFavorite.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
                     showFavoriteUserList(favorite)
                 }
             }

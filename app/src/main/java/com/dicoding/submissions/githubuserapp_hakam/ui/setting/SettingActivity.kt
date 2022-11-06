@@ -11,7 +11,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.submissions.githubuserapp_hakam.R
 import com.dicoding.submissions.githubuserapp_hakam.databinding.ActivitySettingBinding
-import com.dicoding.submissions.githubuserapp_hakam.ui.main.MainViewModelFactory
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingActivity : AppCompatActivity() {
@@ -30,7 +29,7 @@ class SettingActivity : AppCompatActivity() {
         val switchTheme = findViewById<SwitchMaterial>(R.id.switch_theme)
 
         val pref = SettingPreferences.getInstances(dataStore)
-        val settingViewModel = ViewModelProvider(this, MainViewModelFactory(pref))[SettingViewModel::class.java]
+        val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref))[SettingViewModel::class.java]
         settingViewModel.getThemeSetting().observe(this) { isDarkModeActive: Boolean ->
             if (isDarkModeActive) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
