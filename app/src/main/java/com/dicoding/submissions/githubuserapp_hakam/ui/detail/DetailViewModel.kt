@@ -21,6 +21,7 @@ class DetailViewModel(
 ) : ViewModel() {
 
     private val mFavRepo: FavoriteRepository = FavoriteRepository(context)
+    val favUserExists: LiveData<Boolean> = mFavRepo.getFavoriteExists(username = "")
     val favUserList: LiveData<List<FavoriteEntity>> = mFavRepo.getFavoriteUserList()
 
     private val _isLoading = MutableLiveData<Boolean>()
@@ -112,6 +113,10 @@ class DetailViewModel(
     fun deleteFavoriteUser(data: FavoriteEntity) {
         mFavRepo.deleteFavoriteUser(data)
         context.showToast("Success delete from favorite")
+    }
+
+    fun checkFavUser() : Boolean? {
+        return favUserExists.value
     }
 
 }

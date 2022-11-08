@@ -7,7 +7,7 @@ import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEn
 @Dao
 interface FavoriteDao {
 
-    @Query("SELECT * FROM favorite ORDER BY username ASC")
+    @Query("SELECT * FROM favorite ORDER BY username DESC")
     fun getFavoriteUserList(): LiveData<List<FavoriteEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -16,4 +16,6 @@ interface FavoriteDao {
     @Delete
     fun deleteFavoriteUser(favorite: FavoriteEntity)
 
+    @Query("SELECT EXISTS(SELECT * FROM favorite WHERE username = :username )")
+    fun isFavoriteSave(username: String): LiveData<Boolean>
 }

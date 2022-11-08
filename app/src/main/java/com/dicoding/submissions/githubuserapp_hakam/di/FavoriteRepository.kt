@@ -36,4 +36,8 @@ class FavoriteRepository(context: Context) {
         }
     }
 
+    fun getFavoriteExists(username: String): LiveData<Boolean> {
+        return favoriteDao.isFavoriteSave(username)
+    }
+
 }

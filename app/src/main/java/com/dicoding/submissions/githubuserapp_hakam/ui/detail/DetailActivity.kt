@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.dicoding.submissions.githubuserapp_hakam.R
 import com.dicoding.submissions.githubuserapp_hakam.data.local.entity.FavoriteEntity
 import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.DetailUserResponse
+import com.dicoding.submissions.githubuserapp_hakam.data.remote.response.ItemsItem
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_DETAIL
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.EXTRA_FAVORITE
 import com.dicoding.submissions.githubuserapp_hakam.data.token.ConstantToken.Companion.TAB_TITLES
@@ -24,6 +25,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private val detailUsers: String by lazy {
+//        intent.getParcelableExtra<ItemsItem>(EXTRA_DETAIL)
         intent.extras?.getString(EXTRA_DETAIL, "") ?: ""
     }
 
@@ -89,13 +91,38 @@ class DetailActivity : AppCompatActivity() {
                 tabs.text = resources.getString(TAB_TITLES[position])
             }.attach()
 
+            viewModel.favUserExists.observe(this@DetailActivity) { favoriteExist ->
+                if (favoriteExist) {
+                    imbFavorite.setImageDrawableExt(R.drawable.ic_baseline_favorite_24)
+                } else {
+                    imbFavorite.setImageDrawableExt(R.drawable.ic_favorite_border_before_grey_24)
+                }
+            }
+
+            binding.imbFavorite.setOnClickListener {
+                val favUser = favorite.find {it.id == detailUsers}
+                imbFavorite.setOnClickListener {
+                    if (viewModel.checkFavUser()!!) {
+                        viewModel.deleteFavoriteUser(favUser)
+                    } else {
+                        viewModel.insertFavoriteUser(favUser.id, favUser.username, favUser.avatarUrl.toString())
+                    }
+                }
+            }
+
+            /*
+
             viewModel.favUserList.observe(this@DetailActivity) { favorite ->
                 if (favorite.isNotEmpty()) {
                     val tempUser = favorite.find { it.username == detailUsers }
                     if (tempUser != null) {
                         imbFavorite.setImageDrawableExt(R.drawable.ic_baseline_favorite_24)
                         imbFavorite.setOnClickListener {
-                            viewModel.deleteFavoriteUser(tempUser)
+                            if (viewModel.checkFavUser()!!) {
+                                viewModel.deleteFavoriteUser(tempUser)
+                            } else {
+                                viewModel.deleteFavoriteUser(tempUser)
+                            }
                         }
                     } else {
                         imbFavorite.setImageDrawableExt(R.drawable.ic_favorite_border_before_grey_24)
@@ -118,6 +145,9 @@ class DetailActivity : AppCompatActivity() {
                     }
                 }
             }
+
+             */
+
 
         }
     }

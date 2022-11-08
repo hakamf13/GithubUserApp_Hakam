@@ -53,8 +53,8 @@ class FavoriteActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.GONE
                 } else {
                     binding.progressBar.visibility = View.GONE
-                    showFavoriteUserList(favorite)
                 }
+                showFavoriteUserList(favorite)
             }
         }
     }
